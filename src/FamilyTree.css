@@ -1,0 +1,232 @@
+/* src/FamilyTree.css */
+.tree-container {
+  height: 100vh;
+  width: 100%;
+  overflow: auto; /* Ensure the container can scroll if needed */
+}
+
+
+.node-rect {
+  fill: white;
+  stroke: black;
+  rx: 10;
+}
+
+.node-circle {
+  fill: none;
+  stroke: black;
+  stroke-width: 0.5;
+}
+
+.initial-node {
+  stroke: #17B4CE; /* Blue border for the initial node */
+  stroke-width: 1; /* Width of the border */
+  font-size: 12px;
+  text-anchor: left;
+}
+
+.node-user-icon {
+  color: lightgray;
+}
+
+.node-camera-icon {
+  color: darkgray;
+}
+
+.node-name {
+  fill: black;
+  font-size: 14px;
+  text-anchor: left;
+  font-weight: 500;
+}
+
+.node-birthYear {
+  fill: gray;
+  font-size: 10px;
+  text-anchor: left;
+  font-weight: 300;
+}
+
+.node-relationship {
+  fill: black;
+  font-size: 12px;
+  text-anchor: left;
+  font-family: 'Arial, sans-serif';
+}
+
+.node-pen {
+  color: rgb(92, 92, 95);
+  cursor: pointer;
+}
+
+
+.node-user-icon {
+  color: lightgray;
+}
+
+.node-camera-icon {
+  color: rgb(69, 68, 68);
+  position: relative;
+  top: 40px; /* Adjust as needed */
+  left: 10px; /* Center horizontally within the circle */
+}
+
+
+
+.node-plus {
+  color: rgb(92, 92, 95);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+
+
+
+.tree-container {
+  height: 100vh;
+  width: 100%;
+  overflow: auto; /* Ensure the container can scroll if needed */
+}
+
+/* Overlay Styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.form-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  transition: transform 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.form-container h2 {
+  margin-top: 0;
+  font-size: 1.3em;
+  color: #000000;
+  font-weight: 500;
+}
+
+.form-container label {
+  display: block;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.form-container button {
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  margin-left: 10px; /* Add space between buttons */
+}
+
+
+.form-container button.next {
+  background-color: #F56932;
+}
+
+.form-container button.cancel {
+  border: 1px solid #F56932; /* Add a border line */
+  color: rgb(0, 0, 0);
+
+}
+
+
+.form-footer {
+  font-size: 14px;
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  margin-top: 10px;
+}
+
+.radio-group {
+  display: flex;
+  font-size: 14px;
+  margin-top: 30px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.radio-group input {
+  margin-right: 5px;
+}
+
+
+.form-container .name-fields {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-container .name-fields label {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-container .name-fields label:last-child {
+  margin-right: 0;
+}
+
+/* Icon Placeholder */
+.icon-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px; /* Size of the circle */
+  height: 150px; /* Size of the circle */
+  border-radius: 50%; /* Circular shape */
+  background: #f5f5f5; /* Light background for visibility */
+  border: 2px solid #ddd; /* Optional border */
+  margin-top: 30px; /* Space below the icon */
+  overflow: hidden; /* Ensure the image doesn't overflow */
+}
+
+/* Photo Preview */
+.photo-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px; /* Same size as icon-placeholder */
+  height: 150px; /* Same size as icon-placeholder */
+  border-radius: 50%; /* Circular shape */
+  overflow: hidden; /* Ensure the image is clipped to the circle */
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Scale image to cover the entire area */
+  border-radius: 50%; /* Circular shape */
+}
