@@ -4,91 +4,70 @@
   width: 100%;
   overflow: auto; /* Ensure the container can scroll if needed */
 }
-
-
-.node-rect {
-  fill: white;
-  stroke: black;
-  rx: 10;
+.node-circle {
+  fill: #f3f3f3;
+  stroke: #ccc;
+  stroke-width: 1.5px;
 }
 
-.node-circle {
-  fill: none;
-  stroke: black;
-  stroke-width: 0.5;
+.node-user-icon {
+  fill: #aba6a6;
+}
+
+.node-camera-icon {
+  fill: #8a8585;
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-preview img {
+  border-radius: 50%;
+}
+
+.node-rect {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1.5px;
 }
 
 .initial-node {
-  stroke: #17B4CE; /* Blue border for the initial node */
-  stroke-width: 1; /* Width of the border */
+  stroke: #17b4ce; /* Blue border for the initial node */
+  stroke-width: 1.5; /* Width of the border */
   font-size: 12px;
   text-anchor: left;
-}
-
-.node-user-icon {
-  color: lightgray;
-}
-
-.node-camera-icon {
-  color: darkgray;
 }
 
 .node-name {
-  fill: black;
-  font-size: 14px;
-  text-anchor: left;
-  font-weight: 500;
-}
-
-.node-birthYear {
-  fill: gray;
-  font-size: 10px;
-  text-anchor: left;
-  font-weight: 300;
-}
-
-.node-relationship {
-  fill: black;
   font-size: 12px;
-  text-anchor: left;
-  font-family: 'Arial, sans-serif';
+}
+
+.node-birthDate,
+.node-relationship {
+  font-size: 10px;
+}
+
+.node-plus-background {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1.2px;
+}
+
+.node-plus {
+  cursor: pointer;
+  font-size: 12px;
+  transform: translate(-6px, 8px); /* Adjust to push it a bit to the left */
 }
 
 .node-pen {
-  color: rgb(92, 92, 95);
   cursor: pointer;
+  font-size: 15px;
 }
 
-
-.node-user-icon {
-  color: lightgray;
-}
-
-.node-camera-icon {
-  color: rgb(69, 68, 68);
-  position: relative;
-  top: 40px; /* Adjust as needed */
-  left: 10px; /* Center horizontally within the circle */
-}
-
-
-
-.node-plus {
-  color: rgb(92, 92, 95);
-  cursor: pointer;
-  font-size: 20px;
-}
-
-
-
-
-.tree-container {
-  height: 100vh;
-  width: 100%;
-  overflow: auto; /* Ensure the container can scroll if needed */
-}
-
-/* Overlay Styles */
 .overlay {
   position: fixed;
   top: 0;
@@ -149,17 +128,14 @@
   margin-left: 10px; /* Add space between buttons */
 }
 
-
 .form-container button.next {
-  background-color: #F56932;
+  background-color: #f56932;
 }
 
 .form-container button.cancel {
-  border: 1px solid #F56932; /* Add a border line */
+  border: 1px solid #f56932; /* Add a border line */
   color: rgb(0, 0, 0);
-
 }
-
 
 .form-footer {
   font-size: 14px;
@@ -171,7 +147,6 @@
 .radio-group {
   display: flex;
   font-size: 14px;
-  margin-top: 30px;
 }
 
 .radio-group label {
@@ -183,7 +158,6 @@
 .radio-group input {
   margin-right: 5px;
 }
-
 
 .form-container .name-fields {
   display: flex;
@@ -221,6 +195,7 @@
   width: 150px; /* Same size as icon-placeholder */
   height: 150px; /* Same size as icon-placeholder */
   border-radius: 50%; /* Circular shape */
+  margin-top: 20px;
   overflow: hidden; /* Ensure the image is clipped to the circle */
 }
 

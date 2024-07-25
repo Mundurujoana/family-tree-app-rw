@@ -9,7 +9,9 @@ const FamilyNode = ({ node, onAddMember }) => {
         <h2 className="node-name">{node.name}</h2>
         <p className="node-birthYear">{node.birthYear}</p>
       </div>
-      <button onClick={onAddMember} className="add-member-button">+</button>
+      <button onClick={onAddMember} className="add-member-button">
+        +
+      </button>
     </div>
   );
 };

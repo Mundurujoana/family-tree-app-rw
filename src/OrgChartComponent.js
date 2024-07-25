@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useRef, useEffect } from "react";
-import { OrgChart } from "d3-org-chart";
+import React, { useLayoutEffect, useRef, useEffect } from 'react';
+import { OrgChart } from 'd3-org-chart';
 
 const OrgChartComponent = React.forwardRef((props, ref) => {
   const d3Container = useRef(null);
@@ -27,8 +27,8 @@ const OrgChartComponent = React.forwardRef((props, ref) => {
         .svgWidth(500)
         .initialZoom(0.4)
         .onNodeClick((event, d) => {
-          console.log(d + " node clicked");
-          console.log("props", Object.keys(props), d);
+          console.log(d + ' node clicked');
+          console.log('props', Object.keys(props), d);
           props.onNodeClick(event, d.nodeId);
         })
         .render();

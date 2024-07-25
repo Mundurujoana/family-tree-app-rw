@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Tree from 'react-d3-tree';
-import { FaUser, FaPen, FaCamera, FaPlus } from 'react-icons/fa';
+import { FaUser, FaPen, FaPlus, FaCamera } from 'react-icons/fa';
 import './FamilyTree.css';
 
 // Initial data
@@ -21,17 +21,10 @@ const relationships = [
 ];
 
 // Genders
-const genders = [
-  'Male',
-  'Female',
-  'Unknown'
-];
+const genders = ['Male', 'Female', 'Unknown'];
 
 // Status Options
-const statusOptions = [
-  'Living',
-  'Deceased'
-];
+const statusOptions = ['Living', 'Deceased'];
 
 // Places in Rwanda
 const placesInRwanda = [
@@ -44,16 +37,16 @@ const placesInRwanda = [
   'Cyangugu',
   'Kibungo',
   'Kayonza',
-  'Nyamagabe'
+  'Nyamagabe',
 ];
 
 const FamilyTree = () => {
   const [treeData, setTreeData] = useState(initialData);
   const [formStep, setFormStep] = useState(1);
   const [formVisible, setFormVisible] = useState(false);
-  const [profilePhotoFormVisible, setProfilePhotoFormVisible] = useState(false);
   const [currentNode, setCurrentNode] = useState(null);
   const [relationship, setRelationship] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -61,7 +54,6 @@ const FamilyTree = () => {
     birthPlace: '',
     gender: '',
     status: '',
-    Email: ''
   });
   const [profilePhoto, setProfilePhoto] = useState(null);
 
@@ -73,18 +65,41 @@ const FamilyTree = () => {
     }
   };
 
-  // Add a member to the tree
-  const addMember = () => {
-    if (!formData.firstName || !formData.lastName || !formData.birthDate || !formData.birthPlace || !formData.gender || !formData.status || !formData.Email) {
-      alert("Please provide valid inputs for the new member.");
+  // Add or edit a member in the tree
+  const addOrEditMember = () => {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.birthDate ||
+      !formData.birthPlace ||
+      !formData.gender ||
+      !formData.status
+    ) {
+      alert('Please provide valid inputs.');
       return;
     }
 
     const newMember = {
       name: `${formData.firstName} ${formData.lastName}`,
-      attributes: { birthDate: formData.birthDate, birthPlace: formData.birthPlace, relationship, gender: formData.gender, status: formData.status },
+      attributes: {
+        birthDate: formData.birthDate,
+        birthPlace: formData.birthPlace,
+        relationship,
+        gender: formData.gender,
+        status: formData.status,
+      },
       children: [],
       profilePhoto: profilePhoto, // Add profile photo to the member
+    };
+
+    const editNode = (node) => {
+      if (node.name === currentNode) {
+        node.name = newMember.name;
+        node.attributes = newMember.attributes;
+        node.profilePhoto = newMember.profilePhoto;
+      } else if (node.children) {
+        node.children.forEach(editNode);
+      }
     };
 
     const addNode = (node) => {
@@ -98,12 +113,15 @@ const FamilyTree = () => {
 
     setTreeData((prevTreeData) => {
       const newTreeData = { ...prevTreeData };
-      addNode(newTreeData);
+      if (isEditMode) {
+        editNode(newTreeData);
+      } else {
+        addNode(newTreeData);
+      }
       return newTreeData;
     });
 
     setFormVisible(false);
-    setProfilePhotoFormVisible(false);
     setFormStep(1);
     setFormData({
       firstName: '',
@@ -112,18 +130,47 @@ const FamilyTree = () => {
       birthPlace: '',
       gender: '',
       status: '',
-      Email: ''
     });
     setProfilePhoto(null);
+    setIsEditMode(false);
   };
 
   const handlePenClick = (nodeName) => {
-    addMember(nodeName);
+    setCurrentNode(nodeName);
+    setIsEditMode(true);
+    setFormVisible(true);
+    // Find the current node's data to populate the form for editing
+    const findNode = (node) => {
+      if (node.name === nodeName) {
+        return node;
+      } else if (node.children) {
+        for (let child of node.children) {
+          const result = findNode(child);
+          if (result) return result;
+        }
+      }
+      return null;
+    };
+
+    const nodeData = findNode(treeData);
+    if (nodeData) {
+      const [firstName, lastName] = nodeData.name.split(' ');
+      setFormData({
+        firstName,
+        lastName,
+        birthDate: nodeData.attributes.birthDate,
+        birthPlace: nodeData.attributes.birthPlace,
+        gender: nodeData.attributes.gender,
+        status: nodeData.attributes.status,
+      });
+      setProfilePhoto(nodeData.profilePhoto);
+    }
   };
 
   const handlePlusClick = (nodeName) => {
     setCurrentNode(nodeName);
     setFormVisible(true);
+    setIsEditMode(false); // Ensure add mode is set
   };
 
   const handleRelationshipChange = (e) => {
@@ -132,20 +179,27 @@ const FamilyTree = () => {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
   const handleGenderChange = (e) => {
-    setFormData(prevFormData => ({ ...prevFormData, gender: e.target.value }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      gender: e.target.value,
+    }));
   };
 
   const handleStatusChange = (e) => {
-    setFormData(prevFormData => ({ ...prevFormData, status: e.target.value }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      status: e.target.value,
+    }));
   };
 
   const handleNextStep = () => {
-    if (!relationship) {
-      alert("Please select a relationship.");
+    if (!relationship && !isEditMode) {
+      // No need to select relationship in edit mode
+      alert('Please select a relationship.');
       return;
     }
     setFormStep(2);
@@ -153,16 +207,12 @@ const FamilyTree = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    addMember();
+    addOrEditMember();
   };
 
   const handleBackClick = () => {
     setFormStep(1);
     setRelationship('');
-  };
-
-  const handleCameraClick = () => {
-    setProfilePhotoFormVisible(true);
   };
 
   const renderCustomNode = ({ nodeDatum }) => (
@@ -175,26 +225,27 @@ const FamilyTree = () => {
         y="-50"
       />
       <g transform="translate(-80, -40)">
-        <circle cx={25} cy={29} r={30} className="node-circle" />
+        <circle cx={30} cy={30} r={30} className="node-circle" />
         {nodeDatum.profilePhoto ? (
-          <image
-            href={nodeDatum.profilePhoto}
+          <foreignObject
             x="0"
             y="0"
-            width="60" // Ensure this fits within the circle's radius
-            height="60" // Ensure this fits within the circle's radius
+            width="60"
+            height="60"
             clipPath="url(#clipCircle)"
-          />
+          >
+            <img
+              src={nodeDatum.profilePhoto}
+              alt="Profile"
+              className="profile-photo"
+            />
+          </foreignObject>
         ) : (
-          <FaUser size={50} className="node-user-icon" />
+          <FaUser x={8} y={5} size={45} className="node-user-icon" />
         )}
-        <defs>
-          <clipPath id="clipCircle">
-            <circle cx={25} cy={29} r={30} />
-          </clipPath>
-        </defs>
-        <g transform="translate(40, 40)">
-          <FaCamera size={15} className="node-camera-icon" onClick={handleCameraClick} />
+
+        <g transform="translate(45, 45)">
+          <FaCamera size={15} className="node-camera-icon" />
         </g>
       </g>
       <text className="node-name" x="0" y="-20">
@@ -206,16 +257,24 @@ const FamilyTree = () => {
       <text className="node-relationship" x="0" y="20">
         {nodeDatum.attributes.relationship}
       </text>
-      <g transform="translate(0, 40)">
-        <circle className="node-plus-background" />
-        <FaPlus className="node-plus" onClick={() => handlePlusClick(nodeDatum.name)} />
-      </g>
       <g transform="translate(80, 20)">
-        <FaPen className="node-pen" onClick={() => handlePenClick(nodeDatum.name)} />
+        <FaPen
+          className="node-pen"
+          onClick={() => handlePenClick(nodeDatum.name)}
+        />
+      </g>
+      <g transform="translate(-20, 20)">
+        <circle cx={25} cy={20} r={10} className="node-plus-background" />
+        <FaPlus
+          x={19}
+          y={14}
+          className="node-plus"
+          onClick={() => handlePlusClick(nodeDatum.name)}
+        />
       </g>
     </g>
   );
-  
+
   return (
     <div className="tree-container">
       <Tree
@@ -233,28 +292,52 @@ const FamilyTree = () => {
       {formVisible && (
         <div className="overlay">
           <div className="form-container">
-            {formStep === 1 ? (
+            {formStep === 1 && !isEditMode ? (
               <>
                 <h2>Select Relationship</h2>
-                <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleNextStep();
+                  }}
+                >
                   <label>
                     Relationship:
-                    <select value={relationship} onChange={handleRelationshipChange} required>
+                    <select
+                      value={relationship}
+                      onChange={handleRelationshipChange}
+                      required
+                    >
                       <option value="">Select</option>
                       {relationships.map((rel) => (
-                        <option key={rel} value={rel}>{rel}</option>
+                        <option key={rel} value={rel}>
+                          {rel}
+                        </option>
                       ))}
                     </select>
                   </label>
                   <div className="form-footer">
-                    <button type="submit" className="next">Next</button>
-                    <button type="button" className="cancel" onClick={() => setFormVisible(false)}>Cancel</button>
+                    <button type="submit" className="next">
+                      Next
+                    </button>
+                    <button
+                      type="button"
+                      className="cancel"
+                      onClick={() => setFormVisible(false)}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </form>
               </>
             ) : (
               <>
-                <h2>Add {relationship} to {currentNode}</h2>
+                <h2>
+                  {isEditMode
+                    ? `Edit ${currentNode}`
+                    : `Add ${relationship} to ${currentNode}`}
+                  's profile
+                </h2>
                 <form onSubmit={handleFormSubmit}>
                   <label>
                     <div className="radio-group">
@@ -316,7 +399,9 @@ const FamilyTree = () => {
                       >
                         <option value="">Select a place</option>
                         {placesInRwanda.map((place) => (
-                          <option key={place} value={place}>{place}</option>
+                          <option key={place} value={place}>
+                            {place}
+                          </option>
                         ))}
                       </select>
                     </label>
@@ -338,19 +423,47 @@ const FamilyTree = () => {
                       ))}
                     </div>
                   </label>
-                  <label>
-                    Email:
-                    <input
-                      type="text"
-                      name="Email"
-                      value={formData.Email}
-                      onChange={handleFormChange}
-                      required
-                    />
-                  </label>
+                  {!isEditMode && (
+                    <label>
+                      Email:
+                      <input
+                        type="text"
+                        name="Email"
+                        value={formData.Email}
+                        onChange={handleFormChange}
+                      />
+                    </label>
+                  )}
+                  {isEditMode && (
+                    <label>
+                      Profile Photo:
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                      {profilePhoto && (
+                        <div className="photo-preview">
+                          <img
+                            src={profilePhoto}
+                            alt="Profile Preview"
+                            style={{ width: '150px', height: '150px' }}
+                          />
+                        </div>
+                      )}
+                    </label>
+                  )}
                   <div className="form-footer">
-                    <button type="submit" className="next">Add Member</button>
-                    <button type="button" className="cancel" onClick={() => setFormVisible(false)}>Cancel</button>
+                    <button type="submit" className="next">
+                      {isEditMode ? 'Save Changes' : 'Add Member'}
+                    </button>
+                    <button
+                      type="button"
+                      className="cancel"
+                      onClick={() => setFormVisible(false)}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </form>
               </>
@@ -358,47 +471,6 @@ const FamilyTree = () => {
           </div>
         </div>
       )}
-
-{profilePhotoFormVisible && (
-  <div className="overlay">
-    <div className="form-container">
-      <h2>Add Joana's Profile Photo</h2>
-      {profilePhoto ? (
-        <div className="photo-preview">
-          <img src={profilePhoto} alt="Profile Preview" />
-        </div>
-      ) : (
-        <div className="icon-placeholder">
-          <FaUser className="react-icon" />
-        </div>
-      )}
-      <form>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <div className="form-footer">
-          <button
-            type="button"
-            className="next"
-            onClick={() => setProfilePhotoFormVisible(false)}
-          >
-            Done
-          </button>
-          <button
-            type="button"
-            className="cancel"
-            onClick={() => setProfilePhotoFormVisible(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-
     </div>
   );
 };
